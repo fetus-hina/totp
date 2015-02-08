@@ -2,7 +2,7 @@
     "name": "jp3cki/totp",
     "type": "library",
     "description": "RFC 6238 / TOTP: Time-Based One-Time Password Algorithm",
-    "keywords": ["totp", "rfc", "6238", "onetime", "password"],
+    "keywords": ["totp", "otp", "rfc6238", "onetime", "password"],
     "license": "MIT",
     "version": "1.0.0-alpha1",
     "authors": [
