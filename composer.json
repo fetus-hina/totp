@@ -1,0 +1,28 @@
+{
+    "name": "jp3cki/totp",
+    "type": "library",
+    "description": "RFC 6238 / TOTP: Time-Based One-Time Password Algorithm",
+    "keywords": ["totp", "rfc", "6238", "onetime", "password"],
+    "license": "MIT",
+    "version": "1.0.0-alpha1",
+    "authors": [
+        {
+            "name": "AIZAWA Hina",
+            "email": "hina@bouhime.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "ext-hash": "*",
+        "christian-riesen/base32": "1.2.*"
+    },
+    "require-dev": {
+        "apigen/apigen": "4.0.*",
+        "phpunit/phpunit": "4.5.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "jp3cki\\totp\\": "src"
+        }
+    }
+}
