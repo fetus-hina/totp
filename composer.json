@@ -13,6 +13,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
+        "php-64bit": ">=5.4.0",
         "ext-hash": "*",
         "christian-riesen/base32": "1.2.*"
     },
