@@ -64,41 +64,34 @@ class Totp {
         $hash = self::DEFAULT_HASH_ALGORITHM,
         $time_step = self::DEFAULT_TIME_STEP_SEC
     ) {
-        if(!preg_match('/^([A-Z2-7]+)=*$/', $key, $match)) {
+        if(!self::isValidBase32($key)) {
             throw new InvalidArgumentException("Invalid shared secret key given");
-        } else {
-            $key = strtoupper($match[1]);
         }
-        if(is_int($time)) {
-            // ok
-        } elseif($time instanceof \DateTime) {
-            $time = $time->getTimestamp();
-        } elseif(is_numeric($time)) {
-            $time = (int)$time;
-        } else {
-            throw new InvalidArgumentException("Invalid timestamp given");
+        if(!self::isValidDigitCount($digits)) {
+            throw new InvalidArgumentException("Digit-of-return value is out of range");
         }
-        if(is_int($digits) || is_numeric($digits)) {
-            $digits = (int)$digits;
-            if($digits < 1 || $digits > 8) {
-                throw new InvalidArgumentException("Digit-of-return value is out of range");
-            }
-        } else {
-            throw new InvalidArgumentException("Invalid digits-of-return given");
-        }
-        $hash = strtolower($hash);
-        if(!in_array($hash, hash_algos(), true)) {
+        if(!self::isValidHash($hash)) {
             throw new InvalidArgumentException("Unsupported hash algorithm");
         }
-        if(is_int($time_step) || is_numeric($time_step)) {
-            $time_step = (int)$time_step;
-            if($time_step < 1) {
-                throw new InvalidArgumentException("Time-step value is out of range");
-            }
-        }
+        return self::calcMain(
+            Base32::decode(strtoupper($key)),
+            self::makeTimeStepCount($time, $time_step),
+            (int)$digits,
+            strtolower($hash)
+        );
+    }
 
-        $key_binary = Base32::decode($key);
-        $t = self::pack64((int)floor($time / $time_step));
+    /**
+     * Calculate TOTP (Implementation)
+     *
+     * @param   string  $key_binary shared secret key (binary)
+     * @param   int     $step_count A value that reflects a time
+     * @param   int     $digits     Number of digits to return
+     * @param   string  $hash       Hash algorithm such as "sha1", "sha256" or "sha512"
+     * @return  string              TOTP value like "012345"
+     */
+    private static function calcMain($key_binary, $step_count, $digits, $hash) {
+        $t = self::pack64($step_count);
         $hmac = hash_hmac($hash, $t, $key_binary, true);
         $offset = ord($hmac[strlen($hmac) - 1]) & 0x0f;
         $int_value = ((ord($hmac[$offset]) & 0x7f) << 24) +
@@ -124,5 +117,66 @@ class Totp {
             $lower = $value & $low_map; 
             return pack('NN', $higher, $lower); 
         }
+    }
+
+    /**
+     * Get is valid base32 value
+     *
+     * @param   string  $base32     Base32 value
+     * @return  bool
+     */
+    private static function isValidBase32($base32) {
+        return !!preg_match('/^[A-Z2-7]+=*$/', $base32);
+    }
+
+    /**
+     * Get is valid digit count
+     *
+     * @param   int     $digits     Return digit count
+     * @return  bool
+     */
+    private static function isValidDigitCount($digits) {
+        if(is_int($digits) || is_numeric($digits)) {
+            $digits = (int)$digits;
+            if(1 <= $digits && $digits <= 8) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get is valid hash function
+     *
+     * @param   string  $hash   Hash algorithm such as "sha1", "sha256" or "sha512"
+     * @return  bool
+     */
+    private static function isValidHash($hash) {
+        $hash = strtolower($hash);
+        return !!in_array($hash, hash_algos(), true);
+    }
+
+    /**
+     * Make time-step count value
+     *
+     * @param   int|\DateTime   $time       A value that reflects a time
+     * @param   int             $time_step  Time-step
+     * @return  int
+     * @throws  \InvalidArgumentException   Throw exception if not-acceptable parameter given.
+     */
+    private static function makeTimeStepCount($time, $time_step) {
+        if(!is_int($time)) {
+            if($time instanceof \DateTime) {
+                $time = $time->getTimestamp();
+            } elseif(!is_numeric($time)) {
+                throw new InvalidArgumentException("Invalid timestamp given");
+            }
+        }
+        if(is_int($time_step) || is_numeric($time_step)) {
+            if($time_step < 1) {
+                throw new InvalidArgumentException("Time-step value is out of range");
+            }
+        }
+        return (int)floor((int)$time / (int)$time_step);
     }
 }
