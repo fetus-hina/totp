@@ -30,17 +30,19 @@ class Totp {
     /** 
      * Generate user key
      *
-     * @param   int     $size_bits      Generate size(bits, must multiples of 8)
+     * @param   int     $sizeBits       Generate size(bits, must multiples of 8)
      * @return  string                  Base32 encoded generated key
-     * @throws  \Exception              Throw exception if $size_bits is not multiples of 8 or system does not support strong random generating
+     * @throws  \Exception              Throw exception if $sizeBits is not multiples of 8 or system does not support strong random generating
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public static function generateKey($size_bits = self::DEFAULT_KEY_SIZE_BITS) {
-        if($size_bits < 8 || $size_bits % 8 !== 0) {
-            throw new \Exception('$size_bits is not multiples of 8');
+    public static function generateKey($sizeBits = self::DEFAULT_KEY_SIZE_BITS) {
+        if($sizeBits < 8 || $sizeBits % 8 !== 0) {
+            throw new \Exception('$sizeBits is not multiples of 8');
         }
-        $is_strong = false;
-        $binary = openssl_random_pseudo_bytes($size_bits / 8, $is_strong);
-        if($binary === false || $is_strong === false) {
+        $isStrong = false;
+        $binary = openssl_random_pseudo_bytes($sizeBits / 8, $isStrong);
+        if($binary === false || $isStrong === false) {
             throw new \Exception('System does not support strong random generating');
         }
         return Base32::encode($binary);
@@ -53,16 +55,18 @@ class Totp {
      * @param   int|\DateTime   $time       A value that reflects a time
      * @param   int             $digits     Number of digits to return
      * @param   string          $hash       Hash algorithm such as "sha1", "sha256" or "sha512"
-     * @param   int             $time_step  Time-step
+     * @param   int             $timeStep  Time-step
      * @return  string                      TOTP value like "012345"
      * @throws  \InvalidArgumentException   Throw exception if not-acceptable parameter given.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public static function calc(
         $key,
         $time,
         $digits = self::DEFAULT_DIGITS,
         $hash = self::DEFAULT_HASH_ALGORITHM,
-        $time_step = self::DEFAULT_TIME_STEP_SEC
+        $timeStep = self::DEFAULT_TIME_STEP_SEC
     ) {
         if(!self::isValidBase32($key)) {
             throw new InvalidArgumentException("Invalid shared secret key given");
@@ -75,7 +79,7 @@ class Totp {
         }
         return self::calcMain(
             Base32::decode(strtoupper($key)),
-            self::makeTimeStepCount($time, $time_step),
+            self::makeTimeStepCount($time, $timeStep),
             (int)$digits,
             strtolower($hash)
         );
@@ -84,21 +88,21 @@ class Totp {
     /**
      * Calculate TOTP (Implementation)
      *
-     * @param   string  $key_binary shared secret key (binary)
-     * @param   int     $step_count A value that reflects a time
+     * @param   string  $keyBinary shared secret key (binary)
+     * @param   int     $stepCount A value that reflects a time
      * @param   int     $digits     Number of digits to return
      * @param   string  $hash       Hash algorithm such as "sha1", "sha256" or "sha512"
      * @return  string              TOTP value like "012345"
      */
-    private static function calcMain($key_binary, $step_count, $digits, $hash) {
-        $t = self::pack64($step_count);
-        $hmac = hash_hmac($hash, $t, $key_binary, true);
+    private static function calcMain($keyBinary, $stepCount, $digits, $hash) {
+        $timeStep = self::pack64($stepCount);
+        $hmac = hash_hmac($hash, $timeStep, $keyBinary, true);
         $offset = ord($hmac[strlen($hmac) - 1]) & 0x0f;
-        $int_value = ((ord($hmac[$offset]) & 0x7f) << 24) +
-                     ((ord($hmac[$offset + 1])) << 16) +
-                     ((ord($hmac[$offset + 2])) << 8) +
-                     ((ord($hmac[$offset + 3])) << 0);
-        $otp = (string)($int_value % pow(10, $digits));
+        $intValue = ((ord($hmac[$offset]) & 0x7f) << 24) +
+                    ((ord($hmac[$offset + 1])) << 16) +
+                    ((ord($hmac[$offset + 2])) << 8) +
+                    ((ord($hmac[$offset + 3])) << 0);
+        $otp = (string)($intValue % pow(10, $digits));
         return substr(str_repeat('0', $digits) . $otp, -$digits);
     }
 
@@ -110,13 +114,12 @@ class Totp {
     private static function pack64($value) {
         if(version_compare(PHP_VERSION, '5.6.3', '>=')) {
             return pack('J', $value);
-        } else {
-            $high_map = 0xffffffff << 32;
-            $low_map  = 0xffffffff;
-            $higher = ($value & $high_map) >> 32; 
-            $lower = $value & $low_map; 
-            return pack('NN', $higher, $lower); 
         }
+        $highMap = 0xffffffff << 32;
+        $lowMap  = 0xffffffff;
+        $higher = ($value & $highMap) >> 32; 
+        $lower = $value & $lowMap; 
+        return pack('NN', $higher, $lower); 
     }
 
     /**
@@ -160,11 +163,11 @@ class Totp {
      * Make time-step count value
      *
      * @param   int|\DateTime   $time       A value that reflects a time
-     * @param   int             $time_step  Time-step
+     * @param   int             $timeStep  Time-step
      * @return  int
      * @throws  \InvalidArgumentException   Throw exception if not-acceptable parameter given.
      */
-    private static function makeTimeStepCount($time, $time_step) {
+    private static function makeTimeStepCount($time, $timeStep) {
         if(!is_int($time)) {
             if($time instanceof \DateTime) {
                 $time = $time->getTimestamp();
@@ -172,11 +175,9 @@ class Totp {
                 throw new InvalidArgumentException("Invalid timestamp given");
             }
         }
-        if(is_int($time_step) || is_numeric($time_step)) {
-            if($time_step < 1) {
-                throw new InvalidArgumentException("Time-step value is out of range");
-            }
+        if($timeStep < 1) {
+            throw new InvalidArgumentException("Time-step value is out of range");
         }
-        return (int)floor((int)$time / (int)$time_step);
+        return (int)floor((int)$time / (int)$timeStep);
     }
 }
