@@ -17,10 +17,13 @@ doc: depends-install
 test:
 	vendor/bin/phpunit --bootstrap vendor/autoload.php test
 
+phpmd:
+	vendor/bin/phpmd src text cleancode,codesize,controversial,design,naming,unusedcode
+
 clean:
 	rm -rf doc vendor composer.phar
 
 composer.phar:
 	curl -sS https://getcomposer.org/installer | php
 
-.PHONY: test
+.PHONY: all init install-composer depends-install depends-update doc test clean
