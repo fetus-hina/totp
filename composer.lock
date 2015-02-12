@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "christian-riesen/base32",
-            "version": "1.2",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristianRiesen/base32.git",
-                "reference": "b883c3f4bf6f3219c1e9acb7c89f197cbf7b19c4"
+                "reference": "6943e7b010ab224139fd4248ccf84865aa7b0f91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristianRiesen/base32/zipball/b883c3f4bf6f3219c1e9acb7c89f197cbf7b19c4",
-                "reference": "b883c3f4bf6f3219c1e9acb7c89f197cbf7b19c4",
+                "url": "https://api.github.com/repos/ChristianRiesen/base32/zipball/6943e7b010ab224139fd4248ccf84865aa7b0f91",
+                "reference": "6943e7b010ab224139fd4248ccf84865aa7b0f91",
                 "shasum": ""
             },
             "require": {
@@ -58,7 +58,7 @@
                 "encode",
                 "rfc4648"
             ],
-            "time": "2014-08-11 15:45:52"
+            "time": "2015-02-12 09:08:33"
         }
     ],
     "packages-dev": [
