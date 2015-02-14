@@ -156,7 +156,7 @@ class Totp {
         $accountName,
         $issuer
     ) {
-        $params = [ 'secret' => $key ];
+        $params = ['secret' => $key];
         if(strlen((string)$issuer) > 0) {
             $params['issuer'] = $issuer;
         }
