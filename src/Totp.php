@@ -13,6 +13,8 @@ use Base32\Base32;
 
 /**
  * TOTP: Time-Based One-Time Password Algorithm
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class Totp {
     /** Default key size: 80 bits */
@@ -55,7 +57,7 @@ class Totp {
      * @param   int|\DateTime   $time       A value that reflects a time
      * @param   int             $digits     Number of digits to return
      * @param   string          $hash       Hash algorithm such as "sha1", "sha256" or "sha512"
-     * @param   int             $timeStep  Time-step
+     * @param   int             $timeStep   Time-step
      * @return  string                      TOTP value like "012345"
      * @throws  \InvalidArgumentException   Throw exception if not-acceptable parameter given.
      *
@@ -104,6 +106,58 @@ class Totp {
                     ((ord($hmac[$offset + 3])) << 0);
         $otp = (string)($intValue % pow(10, $digits));
         return substr(str_repeat('0', $digits) . $otp, -$digits);
+    }
+
+    /**
+     * Verify TOTP
+     *
+     * @param   string          $value              TOTP value like "012345" which is specified by the user
+     * @param   string          $key                Base32 encoded key
+     * @param   int|\DateTime   $time               A value that reflects a time
+     * @param   int             $acceptStepPast     Acceptable time-step (past)
+     * @param   int             $acceptStepFuture   Acceptable time-step (future)
+     * @param   int             $digits             Number of digits to return
+     * @param   string          $hash               Hash algorithm such as "sha1", "sha256" or "sha512"
+     * @param   int             $timeStep           Time-step
+     * @return  bool                                true if verify successful. false if verify failed.                            
+     *
+     * @throws  \InvalidArgumentException   Throw exception if not-acceptable parameter given.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     */
+    public static function verify(
+        $value,
+        $key,
+        $time,
+        $acceptStepPast = 2,
+        $acceptStepFuture = 1,
+        $digits = self::DEFAULT_DIGITS,
+        $hash = self::DEFAULT_HASH_ALGORITHM,
+        $timeStep = self::DEFAULT_TIME_STEP_SEC
+    ) {
+        if(!self::isValidBase32($key)) {
+            throw new InvalidArgumentException("Invalid shared secret key given");
+        }
+        if(!self::isValidDigitCount($digits)) {
+            throw new InvalidArgumentException("Digit-of-return value is out of range");
+        }
+        if(!self::isValidHash($hash)) {
+            throw new InvalidArgumentException("Unsupported hash algorithm");
+        }
+        $keyBinary = Base32::decode(strtoupper($key));
+        $currentStep = self::makeTimeStepCount($time, $timeStep);
+        $digits = (int)$digits;
+        $hash = strtolower($hash);
+
+        $stepBegin = $currentStep - (int)$acceptStepPast;
+        $stepEnd   = $currentStep + (int)$acceptStepFuture + 1;
+        for($testTimeStep = $stepBegin; $testTimeStep < $stepEnd; ++$testTimeStep) {
+            $testValue = self::calcMain($keyBinary, $testTimeStep, $digits, $hash);
+            if($testValue === $value) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
