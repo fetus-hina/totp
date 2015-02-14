@@ -27,7 +27,6 @@ class TotpTest extends \PHPUnit_Framework_TestCase {
         ];
     }
 
-
     public function testSuiteRfcSha256Provider() {
         $key_b32 = Base32::encode('12345678901234567890123456789012');
         return [
@@ -96,6 +95,38 @@ class TotpTest extends \PHPUnit_Framework_TestCase {
                 strlen($expect),
                 'sha512',
                 30
+            )
+        );
+    }
+
+    public function testSuiteVerifyProvider() {
+        $key_b32 = Base32::encode('12345678901234567890');
+        $time = 1111111111;
+        return [
+            // 厳密に正しい
+            [ Totp::calc($key_b32, $time, 6, 'sha1', 30), $key_b32, $time, true ],
+
+            // 1 ステップだけずれている
+            [ Totp::calc($key_b32, $time, 6, 'sha1', 30), $key_b32, $time - 30, true ],
+            [ Totp::calc($key_b32, $time, 6, 'sha1', 30), $key_b32, $time + 30, true ],
+
+            // 大幅にずれている
+            [ Totp::calc($key_b32, $time, 6, 'sha1', 30), $key_b32, $time - 3600, false ],
+            [ Totp::calc($key_b32, $time, 6, 'sha1', 30), $key_b32, $time + 3600, false ],
+        ];
+    }
+
+    /**
+     * @dataProvider testSuiteVerifyProvider
+     */
+    public function testVerify($value, $key_b32, $time, $expect) {
+        $this->assertEquals(
+            $expect,
+            Totp::verify(
+                $value,
+                $key_b32,
+                $time,
+                strlen($expect)
             )
         );
     }
