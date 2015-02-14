@@ -99,4 +99,16 @@ class TotpTest extends \PHPUnit_Framework_TestCase {
             )
         );
     }
+
+    public function testCreateKeyUrlGA() {
+        $expectRegex = '!otpauth://totp/Example(?::|%3[Aa])alice(?:@|%40)google.com\?secret=JBSWY3DPEHPK3PXP&issuer=Example!';
+        $this->assertRegExp(
+            $expectRegex,
+            Totp::createKeyUriForGoogleAuthenticator(
+                'JBSWY3DPEHPK3PXP',
+                'alice@google.com',
+                'Example'
+            )
+        );
+    }
 }

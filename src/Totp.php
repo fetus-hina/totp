@@ -107,6 +107,72 @@ class Totp {
     }
 
     /**
+     * Create URI to automatically set the authenticator application "Google Authenticator"
+     *
+     * Please note:
+     *      Following parameters will ignored in the Google Authenticator which is de facto standard application:
+     *          - digits:   6 digits only
+     *          - hash:     sha1 only
+     *          - timeStep: 30 seconds only
+     *
+     * @param   string  $key            Base32 encoded key
+     * @param   string  $accountName    User account name, e.g. email address
+     * @param   string  $issuer         Issuer name, e.g. your service name
+     * @return  string                  URI
+     * @throws  \InvalidArgumentException   Throw exception if not-acceptable parameter given.
+     */
+    public static function createKeyUriForGoogleAuthenticator(
+        $key,
+        $accountName,
+        $issuer
+    ) {
+        if(!self::isValidBase32($key)) {
+            throw new InvalidArgumentException("Invalid shared secret key given");
+        }
+
+        return self::createKeyUriImpl(
+            $key,
+            trim($accountName),
+            trim($issuer)
+        );
+    }
+
+    /**
+     * Create URI to automatically set the authenticator application (Implemetation)
+     *
+     * Please note:
+     *      Following parameters will ignored in the Google Authenticator which is de facto standard application:
+     *          - digits:   6 digits only
+     *          - hash:     sha1 only
+     *          - timeStep: 30 seconds only
+     *
+     * @param   string  $key            Base32 encoded key
+     * @param   string  $accountName    User account name, e.g. email address
+     * @param   string  $issuer         Issuer name, e.g. your service name
+     * @return  string                  URI
+     */
+    public static function createKeyUriImpl(
+        $key,
+        $accountName,
+        $issuer
+    ) {
+        $params = ['secret' => $key];
+        if(strlen((string)$issuer) > 0) {
+            $params['issuer'] = $issuer;
+        }
+
+        return sprintf(
+            'otpauth://totp/%s?%s',
+            rawurlencode(
+                strlen((string)$issuer) < 1
+                    ? $accountName
+                    : sprintf('%s:%s', $issuer, $accountName)
+            ),
+            http_build_query($params, PHP_QUERY_RFC3986)
+        );
+    }
+
+    /**
      * Pack 64bit integer to bigendian binary
      *
      * @param int $value int64 value
