@@ -4,7 +4,7 @@
     "description": "RFC 6238 / TOTP: Time-Based One-Time Password Algorithm",
     "keywords": ["totp", "otp", "rfc6238", "onetime", "password"],
     "license": "MIT",
-    "version": "1.0.0-beta1",
+    "version": "1.0.0",
     "authors": [
         {
             "name": "AIZAWA Hina",
@@ -15,6 +15,7 @@
         "php": ">=5.4.0",
         "php-64bit": ">=5.4.0",
         "ext-hash": "*",
+        "ext-openssl": "*",
         "christian-riesen/base32": "~1.2"
     },
     "require-dev": {
