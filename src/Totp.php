@@ -205,7 +205,7 @@ class Totp {
      * @param   string  $issuer         Issuer name, e.g. your service name
      * @return  string                  URI
      */
-    public static function createKeyUriImpl(
+    private static function createKeyUriImpl(
         $key,
         $accountName,
         $issuer
