@@ -222,7 +222,7 @@ class Totp {
                     ? $accountName
                     : sprintf('%s:%s', $issuer, $accountName)
             ),
-            http_build_query($params, PHP_QUERY_RFC3986)
+            http_build_query($params, '', '&', PHP_QUERY_RFC3986)
         );
     }
 
