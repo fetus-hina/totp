@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b93ec2c165a65e578d23a5be69f3d97e",
+    "hash": "63de1ea0b4e2e898c4f04a4e8338aa02",
     "packages": [
         {
             "name": "christian-riesen/base32",
