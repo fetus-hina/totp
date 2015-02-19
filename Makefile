@@ -15,13 +15,13 @@ doc: depends-install
 	vendor/bin/apigen generate --source="src" --destination="doc/api"
 
 test:
-	vendor/bin/phpunit --bootstrap vendor/autoload.php test
+	vendor/bin/phpunit --bootstrap vendor/autoload.php --coverage-clover clover.xml test
 
 phpmd:
 	vendor/bin/phpmd src text cleancode,codesize,controversial,design,naming,unusedcode
 
 clean:
-	rm -rf doc vendor composer.phar
+	rm -rf doc vendor composer.phar clover.xml
 
 composer.phar:
 	curl -sS https://getcomposer.org/installer | php

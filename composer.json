@@ -20,6 +20,7 @@
     },
     "require-dev": {
         "apigen/apigen": "~4.0",
+        "codeclimate/php-test-reporter": "dev-master",
         "phpmd/phpmd": "~2.2",
         "phpunit/phpunit": "~4.5"
     },
