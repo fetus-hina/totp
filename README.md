@@ -8,6 +8,7 @@ PHP implementation of RFC6238 (TOTP: Time-Based One-Time Password Algorithm).
 [![Latest Stable Version](https://poser.pugx.org/jp3cki/totp/v/stable.svg)](https://packagist.org/packages/jp3cki/totp)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/fetus-hina/totp/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/fetus-hina/totp/?branch=master)
 [![Code Climate](https://codeclimate.com/github/fetus-hina/totp/badges/gpa.svg)](https://codeclimate.com/github/fetus-hina/totp)
+[![Test Coverage](https://codeclimate.com/github/fetus-hina/totp/badges/coverage.svg)](https://codeclimate.com/github/fetus-hina/totp)
 
 Requirements
 ------------
