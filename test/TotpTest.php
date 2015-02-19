@@ -149,6 +149,11 @@ class TotpTest extends \PHPUnit_Framework_TestCase {
         Totp::calc('JBSWY0DP', time());
     }
 
+    public function testCalcInvalidTimestamp() {
+        $this->setExpectedException('Exception');
+        Totp::calc('JBSWY3DP', 'A');
+    }
+
     public function testCalcInvalidDigitsL() {
         $this->setExpectedException('Exception');
         Totp::calc('JBSWY3DP', time(), 0);
@@ -197,6 +202,11 @@ class TotpTest extends \PHPUnit_Framework_TestCase {
     public function testVerifyInvalidBase32() {
         $this->setExpectedException('Exception');
         Totp::verify('1', 'JBSWY0DP', time());
+    }
+
+    public function testVerifyInvalidTimestamp() {
+        $this->setExpectedException('Exception');
+        Totp::verify('1', 'JBSWY3DP', 'A');
     }
 
     public function testVerifyInvalidDigitsL() {
