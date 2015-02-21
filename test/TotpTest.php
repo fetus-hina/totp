@@ -231,12 +231,12 @@ class TotpTest extends \PHPUnit_Framework_TestCase {
 
     public function testVerifyInvalidTimestep() {
         $this->setExpectedException('Exception');
-        Totp::verify('1', 'JBSWY3DP', time(), 2, 1, 6, 'my-amazing-hash', 0);
+        Totp::verify('1', 'JBSWY3DP', time(), 2, 1, 6, 'sha1', 0);
     }
 
     public function testVerifyInvalidTimestepA() {
         $this->setExpectedException('Exception');
-        Totp::verify('1', 'JBSWY3DP', time(), 2, 1, 6, 'my-amazing-hash', 'A');
+        Totp::verify('1', 'JBSWY3DP', time(), 2, 1, 6, 'sha1', 'A');
     }
 
     public function testCreateKeyUrlGA() {
