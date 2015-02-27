@@ -59,7 +59,7 @@ Patches and/or report issues are welcome.
 
 * Please create new branch for each issue or feature. (should not work in master branch)
 * Please write and run test. `$ make test`
-* Please run phpmd for static code analysis. `$ make phpmd`
+* Please run check-style for static code analysis and coding rule checking. `$ make check-style`
 * Please clean up commits.
 * Please create new pull-request for each issue or feature.
 * Please gazing the results of Travis-CI and other hooks.

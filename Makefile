@@ -17,8 +17,12 @@ doc: depends-install
 test:
 	vendor/bin/phpunit
 
-phpmd:
+check-style:
 	vendor/bin/phpmd src text cleancode,codesize,controversial,design,naming,unusedcode
+	vendor/bin/phpcs --standard=PSR2 src test
+
+fix-style:
+	vendor/bin/phpcs --standard=PSR2 src test
 
 clean:
 	rm -rf doc vendor composer.phar clover.xml
@@ -26,4 +30,4 @@ clean:
 composer.phar:
 	curl -sS https://getcomposer.org/installer | php
 
-.PHONY: all init install-composer depends-install depends-update doc test clean
+.PHONY: all init install-composer depends-install depends-update doc test clean check-style fix-style
