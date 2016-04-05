@@ -6,7 +6,7 @@ vendor: composer.lock composer.phar
 	php composer.phar install --prefer-dist
 	touch -r $< $@
 
-composer.lock: composer.json
+composer.lock: composer.json composer.phar
 	php composer.phar update -vvv
 
 composer.phar:
