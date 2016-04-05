@@ -16,14 +16,14 @@
         "php-64bit": ">=5.4.0",
         "ext-hash": "*",
         "ext-openssl": "*",
-        "christian-riesen/base32": "~1.2"
+        "christian-riesen/base32": "^1.2"
     },
     "require-dev": {
-        "apigen/apigen": "~4.0",
+        "apigen/apigen": "^4.1",
         "codeclimate/php-test-reporter": "dev-master",
-        "phpmd/phpmd": "~2.2",
-        "phpunit/phpunit": "~4.5",
-        "squizlabs/php_codesniffer": "2.*"
+        "phpmd/phpmd": "^2.4",
+        "phpunit/phpunit": "^4.8|^5.3",
+        "squizlabs/php_codesniffer": "^2.6"
     },
     "autoload": {
         "psr-4": {
