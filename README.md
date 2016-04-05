@@ -20,7 +20,7 @@ Install
 -------
 
 1. Set up [Composer](https://getcomposer.org/), the de facto standard package manager.
-2. `php composer.phar require jp3cki/totp:~1.0`
+2. `php composer.phar require jp3cki/totp:^1.1`
 
 Usage
 -----
@@ -50,7 +50,7 @@ License
 
 [The MIT License](https://github.com/fetus-hina/totp/blob/master/LICENSE).
 
-`Copyright (c) 2015 AIZAWA Hina <hina@bouhime.com>`
+`Copyright (c) 2015-2016 AIZAWA Hina <hina@bouhime.com>`
 
 Contributing
 ------------
