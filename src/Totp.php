@@ -44,12 +44,7 @@ class Totp
         if ($sizeBits < 8 || $sizeBits % 8 !== 0) {
             throw new \Exception('$sizeBits is not multiples of 8');
         }
-        $isStrong = false;
-        $binary = openssl_random_pseudo_bytes($sizeBits / 8, $isStrong);
-        if ($binary === false || $isStrong === false) {
-            throw new \Exception('System does not support strong random generating');
-        }
-        return Base32::encode($binary);
+        return Base32::encode(Random::generate($sizeBits / 8));
     }
 
     /**
@@ -72,18 +67,18 @@ class Totp
         $hash = self::DEFAULT_HASH_ALGORITHM,
         $timeStep = self::DEFAULT_TIME_STEP_SEC
     ) {
-        if (!self::isValidBase32($key)) {
+        if (!static::isValidBase32($key)) {
             throw new InvalidArgumentException("Invalid shared secret key given");
         }
-        if (!self::isValidDigitCount($digits)) {
+        if (!static::isValidDigitCount($digits)) {
             throw new InvalidArgumentException("Digit-of-return value is out of range");
         }
-        if (!self::isValidHash($hash)) {
+        if (!static::isValidHash($hash)) {
             throw new InvalidArgumentException("Unsupported hash algorithm");
         }
-        return self::calcMain(
+        return static::calcMain(
             Base32::decode(strtoupper($key)),
-            self::makeTimeStepCount($time, $timeStep),
+            static::makeTimeStepCount($time, $timeStep),
             (int)$digits,
             strtolower($hash)
         );
@@ -100,7 +95,7 @@ class Totp
      */
     private static function calcMain($keyBinary, $stepCount, $digits, $hash)
     {
-        $timeStep = self::pack64($stepCount);
+        $timeStep = static::pack64($stepCount);
         $hmac = hash_hmac($hash, $timeStep, $keyBinary, true);
         $offset = ord($hmac[strlen($hmac) - 1]) & 0x0f;
         $intValue = ((ord($hmac[$offset]) & 0x7f) << 24) +
@@ -138,24 +133,24 @@ class Totp
         $hash = self::DEFAULT_HASH_ALGORITHM,
         $timeStep = self::DEFAULT_TIME_STEP_SEC
     ) {
-        if (!self::isValidBase32($key)) {
+        if (!static::isValidBase32($key)) {
             throw new InvalidArgumentException("Invalid shared secret key given");
         }
-        if (!self::isValidDigitCount($digits)) {
+        if (!static::isValidDigitCount($digits)) {
             throw new InvalidArgumentException("Digit-of-return value is out of range");
         }
-        if (!self::isValidHash($hash)) {
+        if (!static::isValidHash($hash)) {
             throw new InvalidArgumentException("Unsupported hash algorithm");
         }
         $keyBinary = Base32::decode(strtoupper($key));
-        $currentStep = self::makeTimeStepCount($time, $timeStep);
+        $currentStep = static::makeTimeStepCount($time, $timeStep);
         $digits = (int)$digits;
         $hash = strtolower($hash);
 
         $stepBegin = $currentStep - (int)$acceptStepPast;
         $stepEnd   = $currentStep + (int)$acceptStepFuture + 1;
         for ($testTimeStep = $stepBegin; $testTimeStep < $stepEnd; ++$testTimeStep) {
-            $testValue = self::calcMain($keyBinary, $testTimeStep, $digits, $hash);
+            $testValue = static::calcMain($keyBinary, $testTimeStep, $digits, $hash);
             if ($testValue === $value) {
                 return true;
             }
@@ -183,11 +178,11 @@ class Totp
         $accountName,
         $issuer
     ) {
-        if (!self::isValidBase32($key)) {
+        if (!static::isValidBase32($key)) {
             throw new InvalidArgumentException("Invalid shared secret key given");
         }
 
-        return self::createKeyUriImpl(
+        return static::createKeyUriImpl(
             $key,
             trim($accountName),
             trim($issuer)

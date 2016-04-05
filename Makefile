@@ -14,6 +14,7 @@ composer.phar:
 	touch -t 201601010000 $@
 
 doc: vendor
+	rm -rf doc/api
 	vendor/bin/apigen generate --source="src" --destination="doc/api"
 
 test: vendor
@@ -29,4 +30,4 @@ fix-style: vendor
 clean:
 	rm -rf doc vendor composer.phar clover.xml
 
-.PHONY: all doc check-style fix-style clean
+.PHONY: all doc check-style fix-style clean test
