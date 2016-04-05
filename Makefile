@@ -1,33 +1,32 @@
-all: init doc
+COMPOSER_VERSION=1.0.0-beta2
 
-init: install-composer depends-install
+all: vendor doc
 
-install-composer: composer.phar
+vendor: composer.lock composer.phar
+	php composer.phar install --prefer-dist
+	touch -r $< $@
 
-depends-install: install-composer
-	php composer.phar install
+composer.lock: composer.json
+	php composer.phar update -vvv
 
-depends-update: install-composer
-	php composer.phar self-update
-	php composer.phar update
+composer.phar:
+	curl -sS https://getcomposer.org/installer | php -- --version=$(COMPOSER_VERSION)
+	touch -t 201601010000 $@
 
-doc: depends-install
+doc: vendor
 	vendor/bin/apigen generate --source="src" --destination="doc/api"
 
-test:
+test: vendor
 	vendor/bin/phpunit
 
-check-style:
-	vendor/bin/phpmd src text cleancode,codesize,controversial,design,naming,unusedcode
+check-style: vendor
+	vendor/bin/phpmd src text cleancode,codesize,design,naming,unusedcode
 	vendor/bin/phpcs --standard=PSR2 src test
 
-fix-style:
+fix-style: vendor
 	vendor/bin/phpcs --standard=PSR2 src test
 
 clean:
 	rm -rf doc vendor composer.phar clover.xml
 
-composer.phar:
-	curl -sS https://getcomposer.org/installer | php
-
-.PHONY: all init install-composer depends-install depends-update doc test clean check-style fix-style
+.PHONY: all doc check-style fix-style clean
