@@ -5,6 +5,7 @@ PHP implementation of RFC6238 (TOTP: Time-Based One-Time Password Algorithm).
 
 [![License](https://poser.pugx.org/jp3cki/totp/license.svg)](https://packagist.org/packages/jp3cki/totp)
 [![Latest Stable Version](https://poser.pugx.org/jp3cki/totp/v/stable.svg)](https://packagist.org/packages/jp3cki/totp)
+[![CI](https://github.com/fetus-hina/totp/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/fetus-hina/totp/actions/workflows/ci.yml)
 
 Requirements
 ------------
@@ -16,12 +17,14 @@ Install
 -------
 
 1. Set up [Composer](https://getcomposer.org/), the de facto standard package manager.
-2. `php composer.phar require jp3cki/totp:^1.1`
+2. `php composer.phar require jp3cki/totp`
 
 Usage
 -----
 ```php
 <?php
+
+declare(strict_types=1);
 
 use jp3cki\totp\Totp;
 
