@@ -11,7 +11,7 @@ Requirements
 ------------
 
 * PHP (64-bits): PHP 7.2 or later
-* PHP Extensions: hash, openssl
+* PHP Extensions: hash
 
 Install
 -------
@@ -72,3 +72,4 @@ Breaking Changes
 - v2.0.0
   - Minimum environment is now PHP 7.2
   - Argument types are now strictly enforced
+  - Removed `Random::generate*()`. Always use `random_bytes()` now.
