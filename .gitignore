@@ -1,3 +1,4 @@
+/.phpunit.*
 /doc
 /vendor
 clover.xml

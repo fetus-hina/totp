@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
     bootstrap="./vendor/autoload.php"
-    color="true"
     convertErrorsToExceptions="true"
     convertNoticesToExceptions="true"
     convertWarningsToExceptions="true"
@@ -12,14 +11,8 @@
     </testsuite>
   </testsuites>
   <filter>
-    <blacklist>
-      <directory>./vendor</directory>
-    </blacklist>
     <whitelist>
       <directory>./src</directory>
     </whitelist>
   </filter>
-  <logging>
-    <log type="coverage-clover" target="clover.xml" />
-  </logging>
 </phpunit>

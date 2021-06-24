@@ -1,49 +1,51 @@
 <?php
+
 /**
- * @author AIZAWA Hina <hina@bouhime.com>
- * @copyright 2015 by AIZAWA Hina <hina@bouhime.com>
+ * @author AIZAWA Hina <hina@fetus.jp>
+ * @copyright 2015 by AIZAWA Hina <hina@fetus.jp>
  * @license https://github.com/fetus-hina/totp/blob/master/LICENSE MIT
  * @since 1.0.0
  */
 
+declare(strict_types=1);
+
 namespace jp3cki\totp;
 
-use InvalidArgumentException;
 use Base32\Base32;
+use DateTimeInterface;
+use Exception;
+use InvalidArgumentException;
 
 /**
  * TOTP: Time-Based One-Time Password Algorithm
- *
- * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class Totp
 {
     /** Default key size: 80 bits */
-    const DEFAULT_KEY_SIZE_BITS = 80;
+    public const DEFAULT_KEY_SIZE_BITS = 80;
 
     /** Default hash algorithm: SHA1 */
-    const DEFAULT_HASH_ALGORITHM = 'sha1';
+    public const DEFAULT_HASH_ALGORITHM = 'sha1';
 
     /** Default digits: 6 digits */
-    const DEFAULT_DIGITS = 6;
+    public const DEFAULT_DIGITS = 6;
 
     /** Default time step: 30 sec */
-    const DEFAULT_TIME_STEP_SEC = 30;
+    public const DEFAULT_TIME_STEP_SEC = 30;
 
     /**
      * Generate user key
      *
      * @param  int    $sizeBits Generate size(bits, must multiples of 8)
      * @return string           Base32 encoded generated key
-     * @throws \Exception if $sizeBits is not multiples of 8 or system does not support strong random generating
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
+     * @throws Exception if $sizeBits is not multiples of 8 or system does not support strong random generating
      */
-    public static function generateKey($sizeBits = self::DEFAULT_KEY_SIZE_BITS)
+    public static function generateKey(int $sizeBits = self::DEFAULT_KEY_SIZE_BITS): string
     {
         if ($sizeBits < 8 || $sizeBits % 8 !== 0) {
-            throw new \Exception('$sizeBits is not multiples of 8');
+            throw new Exception('$sizeBits is not multiples of 8');
         }
+
         return Base32::encode(Random::generate($sizeBits / 8));
     }
 
@@ -51,31 +53,32 @@ class Totp
      * Calculate TOTP
      *
      * @param  string        $key      Base32 encoded key
-     * @param  int|\DateTime $time     A value that reflects a time
+     * @param  int|DateTimeInterface $time A value that reflects a time
      * @param  int           $digits   Number of digits to return
      * @param  string        $hash     Hash algorithm such as "sha1", "sha256" or "sha512"
      * @param  int           $timeStep Time-step
      * @return string                  TOTP value like "012345"
-     * @throws \InvalidArgumentException Throw exception if not-acceptable parameter given.
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
+     * @throws InvalidArgumentException Throw exception if not-acceptable parameter given.
      */
     public static function calc(
-        $key,
+        string $key,
         $time,
-        $digits = self::DEFAULT_DIGITS,
-        $hash = self::DEFAULT_HASH_ALGORITHM,
-        $timeStep = self::DEFAULT_TIME_STEP_SEC
-    ) {
+        int $digits = self::DEFAULT_DIGITS,
+        string $hash = self::DEFAULT_HASH_ALGORITHM,
+        int $timeStep = self::DEFAULT_TIME_STEP_SEC
+    ): string {
         if (!static::isValidBase32($key)) {
             throw new InvalidArgumentException("Invalid shared secret key given");
         }
+
         if (!static::isValidDigitCount($digits)) {
             throw new InvalidArgumentException("Digit-of-return value is out of range");
         }
+
         if (!static::isValidHash($hash)) {
             throw new InvalidArgumentException("Unsupported hash algorithm");
         }
+
         return static::calcMain(
             Base32::decode(strtoupper($key)),
             static::makeTimeStepCount($time, $timeStep),
@@ -93,7 +96,7 @@ class Totp
      * @param  string $hash      Hash algorithm such as "sha1", "sha256" or "sha512"
      * @return string TOTP value like "012345"
      */
-    private static function calcMain($keyBinary, $stepCount, $digits, $hash)
+    private static function calcMain(string $keyBinary, int $stepCount, int $digits, string $hash): string
     {
         $timeStep = static::pack64($stepCount);
         $hmac = hash_hmac($hash, $timeStep, $keyBinary, true);
@@ -111,7 +114,7 @@ class Totp
      *
      * @param  string        $value            TOTP value like "012345" which is specified by the user
      * @param  string        $key              Base32 encoded key
-     * @param  int|\DateTime $time             A value that reflects a time
+     * @param  int|DateTimeInterface $time     A value that reflects a time
      * @param  int           $acceptStepPast   Acceptable time-step (past)
      * @param  int           $acceptStepFuture Acceptable time-step (future)
      * @param  int           $digits           Number of digits to return
@@ -119,29 +122,30 @@ class Totp
      * @param  int           $timeStep         Time-step
      * @return bool true if verify successful. false if verify failed.
      *
-     * @throws \InvalidArgumentException Throw exception if not-acceptable parameter given.
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
+     * @throws InvalidArgumentException Throw exception if not-acceptable parameter given.
      */
     public static function verify(
-        $value,
-        $key,
+        string $value,
+        string $key,
         $time,
-        $acceptStepPast = 2,
-        $acceptStepFuture = 1,
-        $digits = self::DEFAULT_DIGITS,
-        $hash = self::DEFAULT_HASH_ALGORITHM,
-        $timeStep = self::DEFAULT_TIME_STEP_SEC
-    ) {
+        int $acceptStepPast = 2,
+        int $acceptStepFuture = 1,
+        int $digits = self::DEFAULT_DIGITS,
+        string $hash = self::DEFAULT_HASH_ALGORITHM,
+        int $timeStep = self::DEFAULT_TIME_STEP_SEC
+    ): bool {
         if (!static::isValidBase32($key)) {
             throw new InvalidArgumentException("Invalid shared secret key given");
         }
+
         if (!static::isValidDigitCount($digits)) {
             throw new InvalidArgumentException("Digit-of-return value is out of range");
         }
+
         if (!static::isValidHash($hash)) {
             throw new InvalidArgumentException("Unsupported hash algorithm");
         }
+
         $keyBinary = Base32::decode(strtoupper($key));
         $currentStep = static::makeTimeStepCount($time, $timeStep);
         $digits = (int)$digits;
@@ -171,13 +175,13 @@ class Totp
      * @param  string $accountName User account name, e.g. email address
      * @param  string $issuer      Issuer name, e.g. your service name
      * @return string URI
-     * @throws \InvalidArgumentException Throw exception if not-acceptable parameter given.
+     * @throws InvalidArgumentException Throw exception if not-acceptable parameter given.
      */
     public static function createKeyUriForGoogleAuthenticator(
-        $key,
-        $accountName,
-        $issuer
-    ) {
+        string $key,
+        string $accountName,
+        string $issuer
+    ): string {
         if (!static::isValidBase32($key)) {
             throw new InvalidArgumentException("Invalid shared secret key given");
         }
@@ -204,10 +208,10 @@ class Totp
      * @return string URI
      */
     private static function createKeyUriImpl(
-        $key,
-        $accountName,
-        $issuer
-    ) {
+        string $key,
+        string $accountName,
+        string $issuer
+    ): string {
         $params = ['secret' => $key];
         if (strlen((string)$issuer) > 0) {
             $params['issuer'] = $issuer;
@@ -229,16 +233,9 @@ class Totp
      *
      * @param int $value int64 value
      */
-    private static function pack64($value)
+    private static function pack64(int $value): string
     {
-        if (version_compare(PHP_VERSION, '5.6.3', '>=')) {
-            return pack('J', $value);
-        }
-        $highMap = 0xffffffff << 32;
-        $lowMap  = 0xffffffff;
-        $higher = ($value & $highMap) >> 32;
-        $lower = $value & $lowMap;
-        return pack('NN', $higher, $lower);
+        return pack('J', $value);
     }
 
     /**
@@ -247,9 +244,9 @@ class Totp
      * @param  string $base32 Base32 value
      * @return bool
      */
-    private static function isValidBase32($base32)
+    private static function isValidBase32(string $base32): bool
     {
-        return !!preg_match('/^[A-Z2-7]+=*$/', $base32);
+        return (bool)preg_match('/^[A-Z2-7]+=*$/', $base32);
     }
 
     /**
@@ -258,15 +255,9 @@ class Totp
      * @param  int  $digits Return digit count
      * @return bool
      */
-    private static function isValidDigitCount($digits)
+    private static function isValidDigitCount(int $digits): bool
     {
-        if (is_int($digits) || is_numeric($digits)) {
-            $digits = (int)$digits;
-            if (1 <= $digits && $digits <= 8) {
-                return true;
-            }
-        }
-        return false;
+        return 1 <= $digits && $digits <= 8;
     }
 
     /**
@@ -275,32 +266,34 @@ class Totp
      * @param  string $hash Hash algorithm such as "sha1", "sha256" or "sha512"
      * @return bool
      */
-    private static function isValidHash($hash)
+    private static function isValidHash(string $hash): bool
     {
         $hash = strtolower($hash);
-        return !!in_array($hash, hash_algos(), true);
+        return (bool)in_array($hash, hash_algos(), true);
     }
 
     /**
      * Make time-step count value
      *
-     * @param  int|\DateTime $time     A value that reflects a time
+     * @param  int|DateTimeInterface $time A value that reflects a time
      * @param  int           $timeStep Time-step
      * @return int
-     * @throws \InvalidArgumentException Throw exception if not-acceptable parameter given.
+     * @throws InvalidArgumentException Throw exception if not-acceptable parameter given.
      */
-    private static function makeTimeStepCount($time, $timeStep)
+    private static function makeTimeStepCount($time, int $timeStep): int
     {
         if (!is_int($time)) {
-            if ($time instanceof \DateTime) {
+            if ($time instanceof DateTimeInterface) {
                 $time = $time->getTimestamp();
-            } elseif (!is_numeric($time)) {
+            } else {
                 throw new InvalidArgumentException("Invalid timestamp given");
             }
         }
-        if ($timeStep < 1) {
+
+        if ((int)$timeStep < 1) {
             throw new InvalidArgumentException("Time-step value is out of range");
         }
-        return (int)floor((int)$time / (int)$timeStep);
+
+        return (int)floor((int)$time / $timeStep);
     }
 }

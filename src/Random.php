@@ -1,10 +1,13 @@
 <?php
+
 /**
- * @author AIZAWA Hina <hina@bouhime.com>
- * @copyright 2015-2016 by AIZAWA Hina <hina@bouhime.com>
+ * @author AIZAWA Hina <hina@fetus.jp>
+ * @copyright 2015-2016 by AIZAWA Hina <hina@fetus.jp>
  * @license https://github.com/fetus-hina/totp/blob/master/LICENSE MIT
  * @since 1.1.0
  */
+
+declare(strict_types=1);
 
 namespace jp3cki\totp;
 

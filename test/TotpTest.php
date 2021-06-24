@@ -1,19 +1,25 @@
 <?php
+
+declare(strict_types=1);
+
 namespace jp3cki\totp\test;
 
 use Base32\Base32;
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
+use Exception;
+use PHPUnit\Framework\TestCase;
 use jp3cki\totp\Totp;
 
-class TotpTest extends \PHPUnit_Framework_TestCase
+class TotpTest extends TestCase
 {
-    public function testGenerateChars()
+    public function testGenerateChars(): void
     {
         $this->assertRegExp('/^[A-Z2-7]+$/', Totp::generateKey(80));
     }
 
-    public function testGenerateLength()
+    public function testGenerateLength(): void
     {
         // base32: 40bits -> 8chars
         $this->assertEquals(8, strlen(Totp::generateKey(40)));
@@ -22,19 +28,19 @@ class TotpTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(32, strlen(Totp::generateKey(160)));
     }
 
-    public function testGenerateLengthNegative()
+    public function testGenerateLengthNegative(): void
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         Totp::generateKey(-40);
     }
 
-    public function testGenerateLengthNot8bits()
+    public function testGenerateLengthNot8bits(): void
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         Totp::generateKey(15);
     }
 
-    public function testSuiteRfcSha1Provider()
+    public function rfcSha1Provider(): array
     {
         $key_b32 = Base32::encode('12345678901234567890');
         return [
@@ -53,7 +59,7 @@ class TotpTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testSuiteRfcSha256Provider()
+    public function rfcSha256Provider(): array
     {
         $key_b32 = Base32::encode('12345678901234567890123456789012');
         return [
@@ -72,7 +78,7 @@ class TotpTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testSuiteRfcSha512Provider()
+    public function rfcSha512Provider(): array
     {
         $key_b32 = Base32::encode('1234567890123456789012345678901234567890123456789012345678901234');
         return [
@@ -92,10 +98,14 @@ class TotpTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider testSuiteRfcSha1Provider
+     * @param int|DateTimeInterface $time
+     * @dataProvider rfcSha1Provider
      */
-    public function testGenerateSha1($key_b32, $time, $expect)
-    {
+    public function testGenerateSha1(
+        string $key_b32,
+        $time,
+        string $expect
+    ): void {
         $this->assertEquals(
             $expect,
             Totp::calc(
@@ -109,10 +119,14 @@ class TotpTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider testSuiteRfcSha256Provider
+     * @param int|DateTimeInterface $time
+     * @dataProvider rfcSha256Provider
      */
-    public function testGenerateSha256($key_b32, $time, $expect)
-    {
+    public function testGenerateSha256(
+        string $key_b32,
+        $time,
+        string $expect
+    ): void {
         $this->assertEquals(
             $expect,
             Totp::calc(
@@ -126,10 +140,14 @@ class TotpTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider testSuiteRfcSha512Provider
+     * @param int|DateTimeInterface $time
+     * @dataProvider rfcSha512Provider
      */
-    public function testGenerateSha512($key_b32, $time, $expect)
-    {
+    public function testGenerateSha512(
+        string $key_b32,
+        $time,
+        string $expect
+    ): void {
         $this->assertEquals(
             $expect,
             Totp::calc(
@@ -142,7 +160,7 @@ class TotpTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testSuiteVerifyProvider()
+    public function verifyProvider(): array
     {
         $key_b32 = Base32::encode('12345678901234567890');
         $time = 1111111111;
@@ -160,119 +178,98 @@ class TotpTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testCalcInvalidBase32()
+    public function testCalcInvalidBase32(): void
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         Totp::calc('JBSWY0DP', time());
     }
 
-    public function testCalcInvalidTimestamp()
+    public function testCalcInvalidTimestamp(): void
     {
-        $this->setExpectedException('Exception');
-        Totp::calc('JBSWY3DP', 'A');
+        $this->expectException(Exception::class);
+        Totp::calc('JBSWY3DP', 'A'); // @phpstan-ignore-line
     }
 
-    public function testCalcInvalidDigitsL()
+    public function testCalcInvalidDigitsL(): void
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         Totp::calc('JBSWY3DP', time(), 0);
     }
 
-    public function testCalcInvalidDigitsH()
+    public function testCalcInvalidDigitsH(): void
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         Totp::calc('JBSWY3DP', time(), 9);
     }
 
-    public function testCalcInvalidDigits()
+    public function testCalcInvalidHash(): void
     {
-        $this->setExpectedException('Exception');
-        Totp::calc('JBSWY3DP', time(), 'A');
-    }
-
-    public function testCalcInvalidHash()
-    {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         Totp::calc('JBSWY3DP', time(), 6, 'my-amazing-hash');
     }
 
-    public function testCalcInvalidTimestep()
+    public function testCalcInvalidTimestep(): void
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         Totp::calc('JBSWY3DP', time(), 6, 'sha1', 0);
     }
 
-    public function testCalcInvalidTimestepA()
-    {
-        $this->setExpectedException('Exception');
-        Totp::calc('JBSWY3DP', time(), 6, 'sha1', 'A');
-    }
-
     /**
-     * @dataProvider testSuiteVerifyProvider
+     * @dataProvider verifyProvider
      */
-    public function testVerify($value, $key_b32, $time, $expect)
-    {
+    public function testVerify(
+        string $value,
+        string $keyB32,
+        int $time,
+        bool $expect
+    ): void {
         $this->assertEquals(
             $expect,
             Totp::verify(
                 $value,
-                $key_b32,
-                $time,
-                strlen($expect)
+                $keyB32,
+                $time
             )
         );
     }
 
-    public function testVerifyInvalidBase32()
+    public function testVerifyInvalidBase32(): void
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         Totp::verify('1', 'JBSWY0DP', time());
     }
 
-    public function testVerifyInvalidTimestamp()
+    public function testVerifyInvalidTimestamp(): void
     {
-        $this->setExpectedException('Exception');
-        Totp::verify('1', 'JBSWY3DP', 'A');
+        $this->expectException(Exception::class);
+        Totp::verify('1', 'JBSWY3DP', 'A'); // @phpstan-ignore-line
     }
 
-    public function testVerifyInvalidDigitsL()
+    public function testVerifyInvalidDigitsL(): void
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         Totp::verify('1', 'JBSWY3DP', time(), 2, 1, 0);
     }
 
-    public function testVerifyInvalidDigitsH()
+    public function testVerifyInvalidDigitsH(): void
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         Totp::verify('1', 'JBSWY3DP', time(), 2, 1, 9);
     }
 
-    public function testVerifyInvalidDigits()
+    public function testVerifyInvalidHash(): void
     {
-        $this->setExpectedException('Exception');
-        Totp::verify('1', 'JBSWY3DP', time(), 2, 1, 'A');
-    }
-
-    public function testVerifyInvalidHash()
-    {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         Totp::verify('1', 'JBSWY3DP', time(), 2, 1, 6, 'my-amazing-hash');
     }
 
-    public function testVerifyInvalidTimestep()
+    public function testVerifyInvalidTimestep(): void
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         Totp::verify('1', 'JBSWY3DP', time(), 2, 1, 6, 'sha1', 0);
     }
 
-    public function testVerifyInvalidTimestepA()
-    {
-        $this->setExpectedException('Exception');
-        Totp::verify('1', 'JBSWY3DP', time(), 2, 1, 6, 'sha1', 'A');
-    }
-
-    public function testCreateKeyUrlGA()
+    public function testCreateKeyUrlGA(): void
     {
         $expectRegex = '!^otpauth://totp/Example%20Issuer(?::|%3[Aa])alice(?:@|%40)google.com' .
                        '\?secret=JBSWY3DPEHPK3PXP&issuer=Example%20Issuer$!';
@@ -286,9 +283,9 @@ class TotpTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testCreateKeyUrlGAInvalidBase32()
+    public function testCreateKeyUrlGAInvalidBase32(): void
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         Totp::createKeyUriForGoogleAuthenticator(
             'JBSWY0DP',
             'alice@google.com',

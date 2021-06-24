@@ -4,16 +4,12 @@ totp
 PHP implementation of RFC6238 (TOTP: Time-Based One-Time Password Algorithm).
 
 [![License](https://poser.pugx.org/jp3cki/totp/license.svg)](https://packagist.org/packages/jp3cki/totp)
-[![Build Status](https://travis-ci.org/fetus-hina/totp.svg)](https://travis-ci.org/fetus-hina/totp)
 [![Latest Stable Version](https://poser.pugx.org/jp3cki/totp/v/stable.svg)](https://packagist.org/packages/jp3cki/totp)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/fetus-hina/totp/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/fetus-hina/totp/?branch=master)
-[![Code Climate](https://codeclimate.com/github/fetus-hina/totp/badges/gpa.svg)](https://codeclimate.com/github/fetus-hina/totp)
-[![Test Coverage](https://codeclimate.com/github/fetus-hina/totp/badges/coverage.svg)](https://codeclimate.com/github/fetus-hina/totp)
 
 Requirements
 ------------
 
-* PHP (64-bits): PHP 5.4.0 or later
+* PHP (64-bits): PHP 7.2 or later
 * PHP Extensions: hash, openssl
 
 Install
@@ -26,8 +22,10 @@ Usage
 -----
 ```php
 <?php
-require_once('vendor/autoload.php');
+
 use jp3cki\totp\Totp;
+
+require_once('vendor/autoload.php');
 
 // Generate new shared-secret key (for each user)
 $secret = Totp::generateKey();
@@ -50,7 +48,7 @@ License
 
 [The MIT License](https://github.com/fetus-hina/totp/blob/master/LICENSE).
 
-`Copyright (c) 2015-2016 AIZAWA Hina <hina@bouhime.com>`
+`Copyright (c) 2015-2021 AIZAWA Hina <hina@fetus.jp>`
 
 Contributing
 ------------
@@ -64,3 +62,10 @@ Patches and/or report issues are welcome.
 * Please create new pull-request for each issue or feature.
 * Please gazing the results of Travis-CI and other hooks.
 * Please use Japanese or *very simple* English to create new pull-request or issue.
+
+Breaking Changes
+----------------
+
+- v2.0.0
+  - Minimum environment is now PHP 7.2
+  - Argument types are now strictly enforced

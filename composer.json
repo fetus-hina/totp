@@ -4,25 +4,28 @@
     "description": "RFC 6238 / TOTP: Time-Based One-Time Password Algorithm",
     "keywords": ["totp", "otp", "rfc6238", "onetime", "password"],
     "license": "MIT",
-    "version": "1.1.0",
     "authors": [
         {
             "name": "AIZAWA Hina",
-            "email": "hina@bouhime.com"
+            "email": "hina@fetus.jp"
         }
     ],
     "require": {
-        "php": ">=5.4.0",
-        "php-64bit": ">=5.4.0",
+        "php": ">= 7.2",
+        "php-64bit": ">= 7.2",
         "ext-hash": "*",
-        "christian-riesen/base32": "^1.2"
+        "christian-riesen/base32": "^1.6"
     },
     "require-dev": {
-        "apigen/apigen": "^4.1",
-        "codeclimate/php-test-reporter": "dev-master",
-        "phpmd/phpmd": "^2.4",
-        "phpunit/phpunit": "^4.8|^5.3",
-        "squizlabs/php_codesniffer": "^2.6"
+        "phpstan/phpstan": "^0.12.90",
+        "phpunit/phpunit": "*",
+        "squizlabs/php_codesniffer": "*"
+    },
+    "config": {
+        "platform": {
+            "php": "7.2.0"
+        },
+        "sort-packages": true
     },
     "suggest": {
         "paragonie/random_compat": "The random_bytes() polyfill library for PHP 5.6 or earlier.",
