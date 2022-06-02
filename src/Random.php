@@ -21,7 +21,7 @@ final class Random
     /**
      * Generate random bytes
      *
-     * @param   int $bytes  The length of the random string that should be returned in bytes.
+     * @param   int<1, max> $bytes The length of the random string that should be returned in bytes.
      * @return  string      Returns a string containing the requested number of cryptographically secure random bytes.
      * @throws  Throwable   If your system has no secure random generators.
      */

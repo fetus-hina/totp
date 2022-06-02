@@ -36,17 +36,21 @@ class Totp
     /**
      * Generate user key
      *
-     * @param  int    $sizeBits Generate size(bits, must multiples of 8)
-     * @return string           Base32 encoded generated key
+     * @param  int<8, max> $sizeBits Generate size(bits, must multiples of 8)
+     * @return string Base32 encoded generated key
      * @throws Exception if $sizeBits is not multiples of 8 or system does not support strong random generating
      */
     public static function generateKey(int $sizeBits = self::DEFAULT_KEY_SIZE_BITS): string
     {
+        // @phpstan-ignore-next-line
         if ($sizeBits < 8 || $sizeBits % 8 !== 0) {
             throw new Exception('$sizeBits is not multiples of 8');
         }
 
-        return Base32::encode(Random::generate($sizeBits / 8));
+        $sizeBytes = (int)round($sizeBits / 8);
+        assert($sizeBytes > 0);
+
+        return Base32::encode(Random::generate($sizeBytes));
     }
 
     /**
@@ -67,21 +71,21 @@ class Totp
         string $hash = self::DEFAULT_HASH_ALGORITHM,
         int $timeStep = self::DEFAULT_TIME_STEP_SEC
     ): string {
-        if (!static::isValidBase32($key)) {
+        if (!self::isValidBase32($key)) {
             throw new InvalidArgumentException("Invalid shared secret key given");
         }
 
-        if (!static::isValidDigitCount($digits)) {
+        if (!self::isValidDigitCount($digits)) {
             throw new InvalidArgumentException("Digit-of-return value is out of range");
         }
 
-        if (!static::isValidHash($hash)) {
+        if (!self::isValidHash($hash)) {
             throw new InvalidArgumentException("Unsupported hash algorithm");
         }
 
-        return static::calcMain(
+        return self::calcMain(
             Base32::decode(strtoupper($key)),
-            static::makeTimeStepCount($time, $timeStep),
+            self::makeTimeStepCount($time, $timeStep),
             (int)$digits,
             strtolower($hash)
         );
@@ -98,7 +102,7 @@ class Totp
      */
     private static function calcMain(string $keyBinary, int $stepCount, int $digits, string $hash): string
     {
-        $timeStep = static::pack64($stepCount);
+        $timeStep = self::pack64($stepCount);
         $hmac = hash_hmac($hash, $timeStep, $keyBinary, true);
         $offset = ord($hmac[strlen($hmac) - 1]) & 0x0f;
         $intValue = ((ord($hmac[$offset]) & 0x7f) << 24) +
@@ -134,27 +138,27 @@ class Totp
         string $hash = self::DEFAULT_HASH_ALGORITHM,
         int $timeStep = self::DEFAULT_TIME_STEP_SEC
     ): bool {
-        if (!static::isValidBase32($key)) {
+        if (!self::isValidBase32($key)) {
             throw new InvalidArgumentException("Invalid shared secret key given");
         }
 
-        if (!static::isValidDigitCount($digits)) {
+        if (!self::isValidDigitCount($digits)) {
             throw new InvalidArgumentException("Digit-of-return value is out of range");
         }
 
-        if (!static::isValidHash($hash)) {
+        if (!self::isValidHash($hash)) {
             throw new InvalidArgumentException("Unsupported hash algorithm");
         }
 
         $keyBinary = Base32::decode(strtoupper($key));
-        $currentStep = static::makeTimeStepCount($time, $timeStep);
+        $currentStep = self::makeTimeStepCount($time, $timeStep);
         $digits = (int)$digits;
         $hash = strtolower($hash);
 
         $stepBegin = $currentStep - (int)$acceptStepPast;
         $stepEnd   = $currentStep + (int)$acceptStepFuture + 1;
         for ($testTimeStep = $stepBegin; $testTimeStep < $stepEnd; ++$testTimeStep) {
-            $testValue = static::calcMain($keyBinary, $testTimeStep, $digits, $hash);
+            $testValue = self::calcMain($keyBinary, $testTimeStep, $digits, $hash);
             if ($testValue === $value) {
                 return true;
             }
@@ -182,11 +186,11 @@ class Totp
         string $accountName,
         string $issuer
     ): string {
-        if (!static::isValidBase32($key)) {
+        if (!self::isValidBase32($key)) {
             throw new InvalidArgumentException("Invalid shared secret key given");
         }
 
-        return static::createKeyUriImpl(
+        return self::createKeyUriImpl(
             $key,
             trim($accountName),
             trim($issuer)

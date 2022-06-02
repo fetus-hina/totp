@@ -31,7 +31,7 @@ class TotpTest extends TestCase
     public function testGenerateLengthNegative(): void
     {
         $this->expectException(Exception::class);
-        Totp::generateKey(-40);
+        Totp::generateKey(-40); // @phpstan-ignore-line
     }
 
     public function testGenerateLengthNot8bits(): void
