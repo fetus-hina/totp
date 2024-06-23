@@ -159,7 +159,7 @@ class Totp
         $stepEnd   = $currentStep + (int)$acceptStepFuture + 1;
         for ($testTimeStep = $stepBegin; $testTimeStep < $stepEnd; ++$testTimeStep) {
             $testValue = self::calcMain($keyBinary, $testTimeStep, $digits, $hash);
-            if ($testValue === $value) {
+            if (hash_equals($testValue, $value)) {
                 return true;
             }
         }
