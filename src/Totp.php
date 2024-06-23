@@ -42,7 +42,6 @@ class Totp
      */
     public static function generateKey(int $sizeBits = self::DEFAULT_KEY_SIZE_BITS): string
     {
-        // @phpstan-ignore-next-line
         if ($sizeBits < 8 || $sizeBits % 8 !== 0) {
             throw new Exception('$sizeBits is not multiples of 8');
         }

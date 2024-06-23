@@ -1,7 +1,8 @@
 parameters:
-  checkMissingIterableValueType: false
   level: max
   paths:
     - src
     - test
   treatPhpDocTypesAsCertain: false
+  ignoreErrors:
+    - identifier: missingType.iterableValue
