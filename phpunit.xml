@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit
-    bootstrap="./vendor/autoload.php"
-    convertErrorsToExceptions="true"
-    convertNoticesToExceptions="true"
-    convertWarningsToExceptions="true"
-    stopOnFailure="false">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./vendor/autoload.php" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache">
   <testsuites>
     <testsuite name="TOTP Test Suite">
       <directory>./test</directory>
     </testsuite>
   </testsuites>
-  <filter>
-    <whitelist>
+  <source>
+    <include>
       <directory>./src</directory>
-    </whitelist>
-  </filter>
+    </include>
+  </source>
 </phpunit>

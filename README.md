@@ -10,7 +10,7 @@ PHP implementation of RFC6238 (TOTP: Time-Based One-Time Password Algorithm).
 Requirements
 ------------
 
-* PHP (64-bits): PHP 7.2 or later
+* PHP (64-bits): PHP 8.1 or later
 * PHP Extensions: hash
 
 Install
@@ -51,7 +51,7 @@ License
 
 [The MIT License](https://github.com/fetus-hina/totp/blob/master/LICENSE).
 
-`Copyright (c) 2015-2021 AIZAWA Hina <hina@fetus.jp>`
+`Copyright (c) 2015-2024 AIZAWA Hina <hina@fetus.jp>`
 
 Contributing
 ------------
@@ -63,11 +63,13 @@ Patches and/or report issues are welcome.
 * Please run check-style for static code analysis and coding rule checking. `$ make check-style`
 * Please clean up commits.
 * Please create new pull-request for each issue or feature.
-* Please gazing the results of Travis-CI and other hooks.
 * Please use Japanese or *very simple* English to create new pull-request or issue.
 
 Breaking Changes
 ----------------
+
+- v3.0.0
+  - Minimum environment is now PHP 8.1
 
 - v2.0.0
   - Minimum environment is now PHP 7.2

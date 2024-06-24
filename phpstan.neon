@@ -4,5 +4,3 @@ parameters:
     - src
     - test
   treatPhpDocTypesAsCertain: false
-  ignoreErrors:
-    - identifier: missingType.iterableValue

@@ -7,6 +7,8 @@ namespace jp3cki\totp\test;
 use PHPUnit\Framework\TestCase;
 use jp3cki\totp\Random;
 
+use function strlen;
+
 final class RandomTest extends TestCase
 {
     public function testGenerate(): void

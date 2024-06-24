@@ -1,9 +1,15 @@
 {
     "name": "jp3cki/totp",
-    "type": "library",
     "description": "RFC 6238 / TOTP: Time-Based One-Time Password Algorithm",
-    "keywords": ["totp", "otp", "rfc6238", "onetime", "password"],
     "license": "MIT",
+    "type": "library",
+    "keywords": [
+        "totp",
+        "otp",
+        "rfc6238",
+        "onetime",
+        "password"
+    ],
     "authors": [
         {
             "name": "AIZAWA Hina",
@@ -11,25 +17,31 @@
         }
     ],
     "require": {
-        "php": ">= 7.2",
-        "php-64bit": ">= 7.2",
+        "php": ">= 8.1",
+        "php-64bit": ">= 8.1",
         "ext-hash": "*",
         "christian-riesen/base32": "^1.6"
     },
     "require-dev": {
-        "phpstan/phpstan": "*",
-        "phpunit/phpunit": "*",
-        "squizlabs/php_codesniffer": "*"
-    },
-    "config": {
-        "platform": {
-            "php": "7.2.0"
-        },
-        "sort-packages": true
+        "ergebnis/composer-normalize": "^2.43",
+        "jp3cki/coding-standard": "^1.0.0",
+        "phpstan/phpstan": "^1.11.5",
+        "phpunit/phpunit": "^10.5.24",
+        "squizlabs/php_codesniffer": "^3.10.1"
     },
     "autoload": {
         "psr-4": {
             "jp3cki\\totp\\": "src"
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "ergebnis/composer-normalize": true
+        },
+        "platform": {
+            "php": "8.1.29"
+        },
+        "sort-packages": true
     }
 }
