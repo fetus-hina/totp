@@ -51,7 +51,7 @@ License
 
 [The MIT License](https://github.com/fetus-hina/totp/blob/master/LICENSE).
 
-`Copyright (c) 2015-2024 AIZAWA Hina <hina@fetus.jp>`
+`Copyright (c) 2015-2025 AIZAWA Hina <hina@fetus.jp>`
 
 Contributing
 ------------
