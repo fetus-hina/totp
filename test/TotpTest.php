@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace jp3cki\totp\test;
 
-use Base32\Base32;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
 use PHPUnit\Framework\TestCase;
+use ParagonIE\ConstantTime\Base32;
 use Throwable;
 use jp3cki\totp\Totp;
 
@@ -48,7 +48,7 @@ class TotpTest extends TestCase
      */
     public static function rfcSha1Provider(): array
     {
-        $keyB32 = Base32::encode('12345678901234567890');
+        $keyB32 = Base32::encodeUpperUnpadded('12345678901234567890');
         return [
             [$keyB32, 59, '94287082'],
             [$keyB32, 1111111109, '07081804'],
@@ -70,7 +70,7 @@ class TotpTest extends TestCase
      */
     public static function rfcSha256Provider(): array
     {
-        $keyB32 = Base32::encode('12345678901234567890123456789012');
+        $keyB32 = Base32::encodeUpperUnpadded('12345678901234567890123456789012');
         return [
             [$keyB32, 59, '46119246'],
             [$keyB32, 1111111109, '68084774'],
@@ -92,7 +92,7 @@ class TotpTest extends TestCase
      */
     public static function rfcSha512Provider(): array
     {
-        $keyB32 = Base32::encode('1234567890123456789012345678901234567890123456789012345678901234');
+        $keyB32 = Base32::encodeUpperUnpadded('1234567890123456789012345678901234567890123456789012345678901234');
         return [
             [$keyB32, 59, '90693936'],
             [$keyB32, 1111111109, '25091201'],
@@ -174,7 +174,7 @@ class TotpTest extends TestCase
      */
     public static function verifyProvider(): array
     {
-        $keyB32 = Base32::encode('12345678901234567890');
+        $keyB32 = Base32::encodeUpperUnpadded('12345678901234567890');
         $time = 1111111111;
         return [
             // 厳密に正しい

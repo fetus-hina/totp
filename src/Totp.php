@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace jp3cki\totp;
 
-use Base32\Base32;
 use DateTimeInterface;
 use Exception;
 use InvalidArgumentException;
+use ParagonIE\ConstantTime\Base32;
 
 use function assert;
 use function floor;
@@ -72,7 +72,7 @@ class Totp
         $sizeBytes = (int)round($sizeBits / 8);
         assert($sizeBytes > 0);
 
-        return Base32::encode(Random::generate($sizeBytes));
+        return Base32::encodeUpperUnpadded(Random::generate($sizeBytes));
     }
 
     /**
@@ -106,7 +106,7 @@ class Totp
         }
 
         return self::calcMain(
-            Base32::decode(strtoupper($key)),
+            Base32::decodeUpper(strtoupper($key)),
             self::makeTimeStepCount($time, $timeStep),
             (int)$digits,
             strtolower($hash),
@@ -172,7 +172,7 @@ class Totp
             throw new InvalidArgumentException('Unsupported hash algorithm');
         }
 
-        $keyBinary = Base32::decode(strtoupper($key));
+        $keyBinary = Base32::decodeUpper(strtoupper($key));
         $currentStep = self::makeTimeStepCount($time, $timeStep);
         $digits = (int)$digits;
         $hash = strtolower($hash);
