@@ -79,6 +79,7 @@ Breaking Changes
   - Minimum environment is now PHP 8.2
   - `Totp::calc()` and `Totp::verify()` no longer accept arbitrary hash algorithms from `hash_algos()`. Only `sha1`, `sha256`, and `sha512` (the algorithms defined by RFC 6238) are allowed; any other value now throws `InvalidArgumentException`. Callers that previously passed values such as `md5` or `crc32` must switch to one of the supported algorithms.
   - The default verification window of `Totp::verify()` is narrowed. `$acceptStepPast` now defaults to `1` (was `2`), matching the maximum drift recommended by RFC 6238 §5.2. To restore the previous behaviour, pass `$acceptStepPast: 2` explicitly.
+  - `Totp::generateKey()` now defaults to a 160-bit shared secret (was 80 bits), matching the HMAC-SHA1 output length recommended by RFC 4226 §4 R6. Existing keys keep working; only newly generated keys are longer. Pass `Totp::generateKey(80)` to restore the previous size.
 
 - v3.0.0
   - Minimum environment is now PHP 8.1

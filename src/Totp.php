@@ -43,8 +43,8 @@ use const PHP_QUERY_RFC3986;
  */
 class Totp
 {
-    /** Default key size: 80 bits */
-    public const DEFAULT_KEY_SIZE_BITS = 80;
+    /** Default key size: 160 bits (matches HMAC-SHA1 output length, recommended by RFC 4226 §4 R6) */
+    public const DEFAULT_KEY_SIZE_BITS = 160;
 
     /** Default hash algorithm: SHA1 */
     public const DEFAULT_HASH_ALGORITHM = 'sha1';
