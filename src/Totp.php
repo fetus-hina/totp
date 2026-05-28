@@ -18,7 +18,6 @@ use ParagonIE\ConstantTime\Base32;
 
 use function assert;
 use function floor;
-use function hash_algos;
 use function hash_equals;
 use function hash_hmac;
 use function http_build_query;
@@ -154,7 +153,7 @@ class Totp
         string $value,
         string $key,
         int|DateTimeInterface $time,
-        int $acceptStepPast = 2,
+        int $acceptStepPast = 1,
         int $acceptStepFuture = 1,
         int $digits = self::DEFAULT_DIGITS,
         string $hash = self::DEFAULT_HASH_ALGORITHM,
@@ -287,12 +286,16 @@ class Totp
     /**
      * Get is valid hash function
      *
+     * Only the hash algorithms defined by RFC 6238 are accepted.
+     * Allowing arbitrary algorithms from hash_algos() would let callers
+     * select non-cryptographic hashes (crc32, adler32, fnv, etc.) that
+     * make TOTP outputs trivially predictable.
+     *
      * @param string $hash Hash algorithm such as "sha1", "sha256" or "sha512"
      */
     private static function isValidHash(string $hash): bool
     {
-        $hash = strtolower($hash);
-        return (bool)in_array($hash, hash_algos(), true);
+        return in_array(strtolower($hash), ['sha1', 'sha256', 'sha512'], true);
     }
 
     /**

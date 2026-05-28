@@ -46,6 +46,13 @@ $isValid = Totp::verify($userInput, $secret, time());
 var_dump($isValid);
 ```
 
+Security Notes
+--------------
+
+* **Replay protection is the caller's responsibility.** `Totp::verify()` does not remember which one-time codes have already been used. Per RFC 6238 §5.2, a server MUST reject any TOTP value that was previously accepted within the validity window. Store the most recently accepted time-step (or the accepted code itself) per user, and reject any submission that is equal to or older than it.
+* **Rate-limit verification attempts.** A 6-digit code with the default ±1-step window leaves roughly 3 codes valid at any moment, i.e. a 3-in-1,000,000 chance per guess. Without throttling, an attacker can brute force a valid code in minutes. Apply per-account lockout or exponential back-off in the calling application.
+* **Restrict the hash algorithm to RFC 6238 values.** The library only accepts `sha1`, `sha256`, and `sha512`. Do not forward an untrusted `hash` parameter into `calc()` / `verify()` from user input.
+
 License
 -------
 
@@ -70,6 +77,8 @@ Breaking Changes
 
 - v4.0.0
   - Minimum environment is now PHP 8.2
+  - `Totp::calc()` and `Totp::verify()` no longer accept arbitrary hash algorithms from `hash_algos()`. Only `sha1`, `sha256`, and `sha512` (the algorithms defined by RFC 6238) are allowed; any other value now throws `InvalidArgumentException`. Callers that previously passed values such as `md5` or `crc32` must switch to one of the supported algorithms.
+  - The default verification window of `Totp::verify()` is narrowed. `$acceptStepPast` now defaults to `1` (was `2`), matching the maximum drift recommended by RFC 6238 §5.2. To restore the previous behaviour, pass `$acceptStepPast: 2` explicitly.
 
 - v3.0.0
   - Minimum environment is now PHP 8.1
