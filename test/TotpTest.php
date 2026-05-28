@@ -7,6 +7,7 @@ namespace jp3cki\totp\test;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ParagonIE\ConstantTime\Base32;
 use Throwable;
@@ -109,9 +110,7 @@ class TotpTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider rfcSha1Provider
-     */
+    #[DataProvider('rfcSha1Provider')]
     public function testGenerateSha1(
         string $keyB32,
         int|DateTimeInterface $time,
@@ -129,9 +128,7 @@ class TotpTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider rfcSha256Provider
-     */
+    #[DataProvider('rfcSha256Provider')]
     public function testGenerateSha256(
         string $keyB32,
         int|DateTimeInterface $time,
@@ -149,9 +146,7 @@ class TotpTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider rfcSha512Provider
-     */
+    #[DataProvider('rfcSha512Provider')]
     public function testGenerateSha512(
         string $keyB32,
         int|DateTimeInterface $time,
@@ -226,9 +221,7 @@ class TotpTest extends TestCase
         Totp::calc('JBSWY3DP', time(), 6, 'sha1', 0);
     }
 
-    /**
-     * @dataProvider verifyProvider
-     */
+    #[DataProvider('verifyProvider')]
     public function testVerify(
         string $value,
         string $keyB32,

@@ -26,7 +26,7 @@
         "ergebnis/composer-normalize": "^2.45",
         "jp3cki/coding-standard": "^2.0.0",
         "phpstan/phpstan": "^2.1.10",
-        "phpunit/phpunit": "^10.5.45",
+        "phpunit/phpunit": "^11.5.55",
         "squizlabs/php_codesniffer": "^3.12.0"
     },
     "autoload": {
