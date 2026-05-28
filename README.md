@@ -10,7 +10,7 @@ PHP implementation of RFC6238 (TOTP: Time-Based One-Time Password Algorithm).
 Requirements
 ------------
 
-* PHP (64-bits): PHP 8.1 or later
+* PHP (64-bits): PHP 8.2 or later
 * PHP Extensions: hash
 
 Install
@@ -67,6 +67,9 @@ Patches and/or report issues are welcome.
 
 Breaking Changes
 ----------------
+
+- v4.0.0
+  - Minimum environment is now PHP 8.2
 
 - v3.0.0
   - Minimum environment is now PHP 8.1

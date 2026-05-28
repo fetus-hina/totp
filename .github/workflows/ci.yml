@@ -11,9 +11,6 @@ jobs:
       matrix:
         php:
           -
-            version: '8.1'
-            experimental: false
-          -
             version: '8.2'
             experimental: false
           -
@@ -21,6 +18,12 @@ jobs:
             experimental: false
           -
             version: '8.4'
+            experimental: false
+          -
+            version: '8.5'
+            experimental: false
+          -
+            version: '8.6'
             experimental: true
     runs-on: ubuntu-24.04
     steps:
@@ -45,10 +48,10 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        name: 'Set up PHP 8.1'
+        name: 'Set up PHP 8.2'
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
       -
         name: 'Install PHP dependencies'
         run: 'composer install --prefer-dist'
@@ -67,9 +70,6 @@ jobs:
       matrix:
         php:
           -
-            version: '8.1'
-            experimental: false
-          -
             version: '8.2'
             experimental: false
           -
@@ -77,6 +77,12 @@ jobs:
             experimental: false
           -
             version: '8.4'
+            experimental: false
+          -
+            version: '8.5'
+            experimental: false
+          -
+            version: '8.6'
             experimental: true
     runs-on: ubuntu-24.04
     continue-on-error: '${{ matrix.php.experimental }}'
